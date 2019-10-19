@@ -50,11 +50,12 @@ class Controller
 	private function _performChecks()
 	{
 	    $action = $this->req->getDir(0);
-		if( $this->brand == 'brand1' )
-		{
-            $action = S('Request')->getDir(1);
-		}
-
+	    switch($this->brand) {
+	        case 'brand1':
+            case 'brand2':
+                $action = S('Request')->getDir(1);
+                break;
+        }
 		if( !$this->_isSubscribed() && ($action != 'subscribe') )
 		{
 			Response::redirect('/subscribe');
