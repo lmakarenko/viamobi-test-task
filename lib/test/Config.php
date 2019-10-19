@@ -15,7 +15,7 @@ class Config extends Singleton
 		$this->_name = $name;
 	}
 
-        public function apply($name)
+	public function apply($name)
 	{
 		$name = "{$this->_name}-$name";
 		$this->_use($name, true);
@@ -31,18 +31,24 @@ class Config extends Singleton
 		return $this->_config[$name];
 	}
 
-        protected function _use($name, $incremental = false)
+	protected function _use($name, $incremental = false)
 	{
-		$name = preg_replace('#[^\w-.]#', '', $name);
-		$filename = PROJECTROOT . "/{$this->_cfgdir}/$name.php";
+	    try {
+            $name = preg_replace('#[^\w-.]#', '', $name);
+            $filename = PROJECTROOT . "/{$this->_cfgdir}/$name.php";
 
-		if( !is_readable($filename) )
-		{
-			throw new \Exception("Config `$name' is invalid");
-		}
+            if( !is_readable($filename) )
+            {
+                throw new \Exception("Config `$name' is invalid");
+            }
 
-		$this->_config = $incremental
-			? array_merge($this->_config, include($filename))
-			: include($filename);
+            $this->_config = $incremental
+                ? array_merge($this->_config, include($filename))
+                : include($filename);
+        } catch(\Exception $ex) {
+	        echo 'Ошибка: ', $ex->getMessage();
+	        die;
+        }
 	}
+
 }
