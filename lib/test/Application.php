@@ -10,7 +10,7 @@ class Application extends Singleton
 	{
 		$dirs = S('Request')->getDirs();
 
-		if( count($dirs) && (($dirs[0] == 'brand1') || ($dirs[0] == 'brand2')) )
+		if( count($dirs) && ($this->isActionBrand($dirs[0])) )
 		{
 			S('Config')->apply(array_shift($dirs));
 		}
@@ -41,4 +41,13 @@ class Application extends Singleton
 
 		call_user_func_array(array($controller, $action), $dirs);
 	}
+    /**
+     * Checks if action is a brand (i.e. brand1, brand2 ... brandN)
+     * @param $action
+     * @return false|int
+     */
+    public function isActionBrand($action)
+    {
+        return preg_match('/^brand/i', $action, $matches);
+    }
 }

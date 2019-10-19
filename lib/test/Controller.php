@@ -14,13 +14,10 @@ class Controller
 		$this->req = S('Request');
 		$action = $this->req->getDir(0);
 
-		if( ($action == 'brand1') || ($action == 'brand2') )
-		{
+		if($action && S('Application')->isActionBrand($action) ) {
 			$this->tpl->setGlob('baseurl', "/{$action}");
             $this->brand = $action;
-		}
-		else
-		{
+		} else {
 			$this->tpl->setGlob('baseurl', '');
 		}
 
@@ -49,20 +46,24 @@ class Controller
 
 	private function _performChecks()
 	{
-	    $action = $this->req->getDir(0);
-	    switch($this->brand) {
-	        case 'brand1':
-            case 'brand2':
-                $action = S('Request')->getDir(1);
-                break;
+        if(isset($this->brand)) {
+            $action = S('Request')->getDir(1);
+        } else {
+            $action = S('Request')->getDir(0);
         }
 		if( !$this->_isSubscribed() && ($action != 'subscribe') )
 		{
 			Response::redirect('/subscribe');
 		}
 	}
+
+    /**
+     * Generates session parameter key string
+     * @return string
+     */
 	private function getSessionKey()
     {
         return isset($this->brand) ? "subs-{$this->brand}" : 'subs';
     }
+
 }
